@@ -3,6 +3,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { fetcher } from "~/lib/fetcher";
 import { Ticket } from "~/components/Ticket";
+import { SEO } from "~/components/SEO";
 
 export default function Home() {
   const router = useRouter();
@@ -18,16 +19,18 @@ export default function Home() {
 
   return (
     <>
+      <SEO />
       <div className="bg-gray-100 min-h-screen flex flex-col justify-center">
-        <div className="mx-auto mb-5">
-          <Image src="/logo.png" alt="logo" width="250px" height="250px" />
-        </div>
+        <div className="mt-6 mx-auto w-full max-w-md py-8 px-6 bg-white rounded-lg shadow-sm space-y-4">
+          <div className="flex items-center">
+            <Image src="/logo.png" alt="logo" width="250px" height="250px" />
+            <Image src="/logo.png" alt="logo" width="250px" height="250px" />
+          </div>
 
-        <div className="mx-auto w-full max-w-md">
-          <div className="text-2xl font-bold text-center">E-Ticket PKPM</div>
-        </div>
+          <div className="mx-auto w-full max-w-md">
+            <div className="text-2xl font-bold text-center">E-Ticket PKPM</div>
+          </div>
 
-        <div className="mt-6 mx-auto w-full max-w-md py-8 px-6 bg-white rounded-lg shadow-sm">
           <form onSubmit={handleSubmit} className="flex flex-col" method="POST">
             <label className="text-base font-medium">
               Enter Master Password

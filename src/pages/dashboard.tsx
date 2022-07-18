@@ -1,4 +1,5 @@
 import { Nav } from "~/components/Nav";
+import { SEO } from "~/components/SEO";
 import { Table } from "~/components/Table";
 
 const data = [
@@ -249,6 +250,8 @@ const data = [
 export default function Dashboard() {
   return (
     <>
+      <SEO />
+
       <Nav />
       <Table data={data} />
     </>

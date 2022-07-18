@@ -46,7 +46,7 @@ export function Table({ data }) {
         accessorKey: "kelompok",
         header: "Kelompok",
         cell: (info) => (
-          <span style={{ color: colorOf(info.getValue()) }}>
+          <span style={{ color: colorOf(info.getValue()), fontWeight: 600 }}>
             {info.getValue()}
           </span>
         ),
@@ -81,19 +81,14 @@ export function Table({ data }) {
   });
 
   const colorOf = (kelompok) => {
-    switch (kelompok) {
-      case "Hurricane":
-        return "#dc2626";
-      case "Typhoon":
-        return "#ea580c";
-      case "Tornado":
-        return "#d97706";
-      case "Gale":
-        return "#ca8a04";
-      default:
-        return "#4b5563";
-      //nanti diisi sesuai dengan kelompok dan ketentuan panitia pkpm (kevin)
-    }
+    const lookup = {
+      Hurricane: "#dc2626",
+      Typhoon: "#ea580c",
+      Tornado: "#d97706",
+      Gale: "#ca8a04",
+      // TODO: nanti disesuain lagi sama kelompok (kevin)
+    };
+    return lookup.hasOwnProperty(kelompok) ? lookup[kelompok] : "black";
   };
 
   return (
