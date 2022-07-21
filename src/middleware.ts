@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import { SECRET } from "~/lib/env";
 import { verify } from "~/lib/jwt";
 
-const SECRET = process.env.SECRET;
 const PROTECTED_ROUTES = [/\/dashboard/, /\/check-in\/.+/];
 
 export default async function middleware(req: NextRequest) {
   const { cookies, nextUrl } = req;
+
   const token = cookies.get("E-TICKET_ACCESS_TOKEN");
   const currentUrl = nextUrl.pathname;
   const redirectUrl = nextUrl.clone();

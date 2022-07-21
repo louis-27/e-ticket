@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import cookie from "cookie";
+import { PASSWORD, SECRET } from "~/lib/env";
 import { sign } from "~/lib/jwt";
 
 export default async function handler(
@@ -8,7 +9,7 @@ export default async function handler(
 ) {
   const { password } = req.body;
 
-  if (password !== process.env.PASSWORD) {
+  if (password !== PASSWORD) {
     res.status(401);
     res.json({ message: "Incorrect credentials" });
 
@@ -16,8 +17,7 @@ export default async function handler(
   }
 
   const payload = { password };
-  const secret = process.env.SECRET;
-  const token = await sign(payload, secret);
+  const token = await sign(payload, SECRET);
 
   res.setHeader(
     "Set-Cookie",

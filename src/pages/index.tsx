@@ -12,8 +12,6 @@ export default function Home() {
     e.preventDefault();
 
     const user = await fetcher("login", { password });
-    const test = await user.json();
-    console.log(user, test);
     if (user.status === 200) {
       router.push("/dashboard");
     }
