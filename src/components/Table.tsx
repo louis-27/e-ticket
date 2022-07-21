@@ -59,7 +59,11 @@ export function Table({ data }) {
       {
         accessorKey: "status",
         header: "Status",
-        cell: (info) => (info.getValue() ? "✅" : "❌"),
+        cell: (info) => (
+          <span style={{ marginLeft: ".75rem" }}>
+            {info.getValue() ? "✅" : "❌"}
+          </span>
+        ),
       },
       {
         accessorKey: "checkIn",
