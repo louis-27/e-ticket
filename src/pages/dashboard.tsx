@@ -11,7 +11,7 @@ const data = [
     nim: "2440023451",
     kelompok: "Typhoon",
     pic: "Adi Muhajir",
-    status: true,
+    status: false,
     checkIn: "2022-07-16T10:12:16.788Z",
   },
   {
@@ -44,7 +44,7 @@ const data = [
     nim: "2440026849",
     kelompok: "Typhoon",
     pic: "Adi Muhajir",
-    status: true,
+    status: false,
     checkIn: "2022-07-16T10:12:16.788Z",
   },
   {

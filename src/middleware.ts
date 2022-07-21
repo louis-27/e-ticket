@@ -1,31 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
+import { verify } from "~/lib/jwt";
 
+const SECRET = process.env.SECRET;
 const PROTECTED_ROUTES = [/\/dashboard/, /\/check-in\/.+/];
 
-export default function middleware(req: NextRequest) {
-  const cookie = process.env.COOKIE;
-  const token = req.cookies.get("E-TICKET_ACCESS_TOKEN");
-  const currentUrl = req.nextUrl.pathname;
+export default async function middleware(req: NextRequest) {
+  const { cookies, nextUrl } = req;
+  const token = cookies.get("E-TICKET_ACCESS_TOKEN");
+  const currentUrl = nextUrl.pathname;
+  const redirectUrl = nextUrl.clone();
+  redirectUrl.pathname = "/";
 
-  // console.log(token, "===", cookie, token === cookie);
+  if (PROTECTED_ROUTES.filter((route) => route.test(currentUrl)).length > 0) {
+    if (!token) {
+      return NextResponse.redirect(redirectUrl);
+    }
 
-  // if (
-  //   token &&
-  //   token !== cookie &&
-  //   PROTECTED_ROUTES.filter((route) => route.test(currentUrl)).length > 0
-  // ) {
-  //   const url = req.nextUrl.clone();
-  //   url.pathname = "/";
-  //   return NextResponse.redirect(url);
-  // }
-
-  if (
-    !token &&
-    PROTECTED_ROUTES.filter((route) => route.test(currentUrl)).length > 0
-    // (token && token != cookie)
-  ) {
-    const url = req.nextUrl.clone();
-    url.pathname = "/";
-    return NextResponse.redirect(url);
+    try {
+      await verify(token, SECRET);
+    } catch (e) {
+      return NextResponse.redirect(redirectUrl);
+    }
   }
 }

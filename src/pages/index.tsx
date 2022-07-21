@@ -2,7 +2,6 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import Image from "next/image";
 import { fetcher } from "~/lib/fetcher";
-import { Ticket } from "~/components/Ticket";
 import { SEO } from "~/components/SEO";
 
 export default function Home() {
@@ -11,8 +10,11 @@ export default function Home() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (password === process.env.NEXT_PUBLIC_PASSWORD) {
-      await fetcher("login", { password });
+
+    const user = await fetcher("login", { password });
+    const test = await user.json();
+    console.log(user, test);
+    if (user.status === 200) {
       router.push("/dashboard");
     }
   };
@@ -38,6 +40,7 @@ export default function Home() {
             <input
               type="password"
               placeholder="Password"
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="mt-2 mb-4 border border-gray-300 px-3 py-2 rounded-lg shadow-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               required

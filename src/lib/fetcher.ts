@@ -7,8 +7,7 @@ export const fetcher = async (slug: string, data = undefined) => {
     },
     body: JSON.stringify(data),
   }).then((res) => {
-    console.log(res);
     if (res.status < 200 || res.status > 399) throw new Error();
-    return res.json();
+    return res;
   });
 };

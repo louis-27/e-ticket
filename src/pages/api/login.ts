@@ -1,13 +1,23 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import cookie from "cookie";
-import jwt from "jsonwebtoken";
+import { sign } from "~/lib/jwt";
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const { password } = req.body;
+
+  if (password !== process.env.PASSWORD) {
+    res.status(401);
+    res.json({ message: "Incorrect credentials" });
+
+    return;
+  }
 
   const payload = { password };
   const secret = process.env.SECRET;
-  const token = jwt.sign(payload, secret, { expiresIn: "8h" });
+  const token = await sign(payload, secret);
 
   res.setHeader(
     "Set-Cookie",
