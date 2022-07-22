@@ -11,9 +11,12 @@ export default function Home() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const user = await fetcher("login", { password });
+    const user = await fetcher("auth/login", { password });
     if (user.status === 200) {
       router.push("/dashboard");
+    } else {
+      // TODO (Low): Incorrect password message
+      window.alert("Incorrect password");
     }
   };
 

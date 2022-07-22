@@ -5,8 +5,7 @@ export function Nav() {
   const router = useRouter();
 
   const logOut = async () => {
-    await fetcher("logout");
-    console.log("hi");
+    await fetcher("auth/logout");
     router.push("/");
   };
 
