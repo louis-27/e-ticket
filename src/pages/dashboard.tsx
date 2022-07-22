@@ -1,259 +1,44 @@
 import { Nav } from "~/components/Nav";
 import { SEO } from "~/components/SEO";
 import { Table } from "~/components/Table";
+import { prisma } from "~/lib/prisma";
 
-const data = [
-  {
-    id: "1",
-    nama: "Ari Wira Setiawan",
-    email: "ariwirasetiawan@gmail.com",
-    noHp: "087247865033",
-    nim: "2440023451",
-    kelompok: "Typhoon",
-    pic: "Adi Muhajir",
-    status: false,
-    checkIn: "2022-07-16T10:12:16.788Z",
-  },
-  {
-    id: "2",
-    nama: "Doddy Yohanes Iskandar",
-    email: "doddyyohanesiskandar@gmail.com",
-    noHp: "084967044171",
-    nim: "2440026174",
-    kelompok: "Typhoon",
-    pic: "Adi Muhajir",
-    status: true,
-    checkIn: "2022-07-16T10:12:16.788Z",
-  },
-  {
-    id: "3",
-    nama: "Prayogo Weimin",
-    email: "prayogoweimin@gmail.com",
-    noHp: "082639526217",
-    nim: "2440026840",
-    kelompok: "Typhoon",
-    pic: "Adi Muhajir",
-    status: true,
-    checkIn: "2022-07-16T10:12:16.788Z",
-  },
-  {
-    id: "4",
-    nama: "Baroleh Park",
-    email: "barolehpark@gmail.com",
-    noHp: "088799518745",
-    nim: "2440026849",
-    kelompok: "Typhoon",
-    pic: "Adi Muhajir",
-    status: false,
-    checkIn: "2022-07-16T10:12:16.788Z",
-  },
-  {
-    id: "5",
-    nama: "Geron Tahitu",
-    email: "gerontahitu@gmail.com",
-    noHp: "081012317659",
-    nim: "2440026164",
-    kelompok: "Typhoon",
-    pic: "Adi Muhajir",
-    status: true,
-    checkIn: "2022-07-16T10:12:16.788Z",
-  },
-  {
-    id: "6",
-    nama: "Andrew Sianipar",
-    email: "andrewsianipar@gmail.com",
-    noHp: "088011460373",
-    nim: "2440026627",
-    kelompok: "Hurricane",
-    pic: "Berta Putri",
-    status: true,
-    checkIn: "2022-07-16T10:12:16.788Z",
-  },
-  {
-    id: "7",
-    nama: "Barak Babo",
-    email: "barakbabo@gmail.com",
-    noHp: "085443644031",
-    nim: "2440026463",
-    kelompok: "Hurricane",
-    pic: "Berta Putri",
-    status: true,
-    checkIn: "2022-07-16T10:12:16.788Z",
-  },
-  {
-    id: "8",
-    nama: "Azariah Banjarkasi",
-    email: "azariahbanjarkasi@gmail.com",
-    noHp: "082551990996",
-    nim: "2440026731",
-    kelompok: "Hurricane",
-    pic: "Berta Putri",
-    status: true,
-    checkIn: "2022-07-16T10:12:16.788Z",
-  },
-  {
-    id: "9",
-    nama: "Susilo",
-    email: "susilo@gmail.com",
-    noHp: "082793691195",
-    nim: "2440026289",
-    kelompok: "Hurricane",
-    pic: "Berta Putri",
-    status: true,
-    checkIn: "2022-07-16T10:12:16.788Z",
-  },
-  {
-    id: "10",
-    nama: "Eko",
-    email: "eko@gmail.com",
-    noHp: "086986154632",
-    nim: "2440026107",
-    kelompok: "Hurricane",
-    pic: "Berta Putri",
-    status: true,
-    checkIn: "2022-07-16T10:12:16.788Z",
-  },
-  {
-    id: "11",
-    nama: "Susanti Yanti Iskandar",
-    email: "susantiyantiiskandar@gmail.com",
-    noHp: "081218809641",
-    nim: "2440026583",
-    kelompok: "Tornado",
-    pic: "Chris Tan",
-    status: true,
-    checkIn: "2022-07-16T10:12:16.788Z",
-  },
-  {
-    id: "12",
-    nama: "Intan Dwi Indradjaja",
-    email: "intandwiindradjaja@gmail.com",
-    noHp: "082549325965",
-    nim: "2440026242",
-    kelompok: "Tornado",
-    pic: "Chris Tan",
-    status: true,
-    checkIn: "2022-07-16T10:12:16.788Z",
-  },
-  {
-    id: "13",
-    nama: "Mulawarman Yingtai",
-    email: "mulawarmanyingtai@gmail.com",
-    noHp: "088272161380",
-    nim: "2440026273",
-    kelompok: "Tornado",
-    pic: "Chris Tan",
-    status: true,
-    checkIn: "2022-07-16T10:12:16.788Z",
-  },
-  {
-    id: "14",
-    nama: "Budiono Jun",
-    email: "budionojun@gmail.com",
-    noHp: "081444105618",
-    nim: "24400262",
-    kelompok: "Tornado",
-    pic: "Chris Tan",
-    status: true,
-    checkIn: "2022-07-16T10:12:16.788Z",
-  },
-  {
-    id: "15",
-    nama: "Swinda Hahury",
-    email: "swindahahury@gmail.com",
-    noHp: "089926665785",
-    nim: "2440026144",
-    kelompok: "Tornado",
-    pic: "Chris Tan",
-    status: true,
-    checkIn: "2022-07-16T10:12:16.788Z",
-  },
-  {
-    id: "16",
-    nama: "Martha Laksa",
-    email: "marthalaksa@gmail.com",
-    noHp: "081255200510",
-    nim: "2440026526",
-    kelompok: "Gale",
-    pic: "Dimitri Markus",
-    status: true,
-    checkIn: "2022-07-16T10:12:16.788Z",
-  },
-  {
-    id: "17",
-    nama: "Magdalene Lingga",
-    email: "magdalenelingga@gmail.com",
-    noHp: "083707953992",
-    nim: "244002684",
-    kelompok: "Gale",
-    pic: "Dimitri Markus",
-    status: true,
-    checkIn: "2022-07-16T10:12:16.788Z",
-  },
-  {
-    id: "18",
-    nama: "Sherah Basirun",
-    email: "sherahbasirun@gmail.com",
-    noHp: "089720028234",
-    nim: "2440026538",
-    kelompok: "Gale",
-    pic: "Dimitri Markus",
-    status: true,
-    checkIn: "2022-07-16T10:12:16.788Z",
-  },
-  {
-    id: "19",
-    nama: "Srilestari",
-    email: "srilestari@gmail.com",
-    noHp: "084524701599",
-    nim: "2440026860",
-    kelompok: "Gale",
-    pic: "Dimitri Markus",
-    status: true,
-    checkIn: "2022-07-16T10:12:16.788Z",
-  },
-  {
-    id: "20",
-    nama: "Ratu",
-    email: "ratu@gmail.com",
-    noHp: "08202235557",
-    nim: "2440026602",
-    kelompok: "Gale",
-    pic: "Dimitri Markus",
-    status: true,
-    checkIn: "2022-07-16T10:12:16.788Z",
-  },
-  {
-    id: "21",
-    nama: "Kevin CHristanto",
-    email: "kevinchristanto@gmail.com",
-    noHp: "+628127075561",
-    nim: "2440026602",
-    kelompok: "Gale",
-    pic: "Dimitri Markus",
-    status: true,
-    checkIn: "2022-07-16T10:12:16.788Z",
-  },
-  {
-    id: "22",
-    nama: "Bryan Zheng",
-    email: "bryanzheng@gmail.com",
-    noHp: "+6281261459889",
-    nim: "2440026602",
-    kelompok: "Gale",
-    pic: "Dimitri Markus",
-    status: true,
-    checkIn: "2022-07-16T10:12:16.788Z",
-  },
-];
-
-export default function Dashboard() {
+export default function Dashboard({ participants }) {
   return (
     <>
       <SEO />
 
       <Nav />
-      <Table data={data} />
+      <Table data={participants} />
     </>
   );
+}
+
+export async function getServerSideProps(context) {
+  const participants = await prisma.participant.findMany({
+    include: {
+      group: {
+        select: {
+          name: true,
+          pic: true,
+        },
+      },
+      checkIn: {
+        select: {
+          date: true,
+        },
+      },
+    },
+  });
+
+  console.log(participants);
+  const f = participants.map((e) =>
+    !e.checkInId
+      ? e
+      : { ...e, checkIn: { ...e.checkIn, date: e.checkIn.date.toISOString() } }
+  );
+
+  return {
+    props: { participants: f },
+  };
 }

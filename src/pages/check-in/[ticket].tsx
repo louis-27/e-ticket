@@ -1,5 +1,6 @@
 import { SEO } from "~/components/SEO";
 import { Ticket } from "~/components/Ticket";
+import { prisma } from "~/lib/prisma";
 
 export async function getServerSideProps(context) {
   const isBase64 =
@@ -23,25 +24,27 @@ export async function getServerSideProps(context) {
     return { props: { success: false } };
   }
 
-  const tickets = [
-    {
-      id: 22,
-      nama: "Bryan Zheng",
-      nim: 2440026602,
-      kelompok: "Typhoon",
-      pic: "Dimitri Markus",
+  const foundTicket = await prisma.participant.findFirst({
+    where: {
+      id: ticketObj.id,
+      nim: `${ticketObj.nim}`,
     },
-  ];
-  // if ticket id || nim invalid return fail
-  let foundTicket = tickets.filter(
-    (ticket) => ticket.id === ticketObj.id && ticket.nim === ticketObj.nim
-  );
-  if (foundTicket.length === 0) return { props: { success: false } };
+    include: {
+      group: {
+        select: {
+          name: true,
+          pic: true,
+        },
+      },
+    },
+  });
+
+  if (!foundTicket) return { props: { success: false } };
 
   return {
     props: {
       success: true,
-      ticketDetails: foundTicket[0],
+      ticketDetails: foundTicket,
     },
   };
 }
@@ -52,7 +55,7 @@ export default function CheckInTicket({ success, ticketDetails }) {
       <SEO />
 
       <div className="h-screen flex justify-center items-center">
-        <Ticket ticketDetails={ticketDetails} />
+        <Ticket ticketDetails={ticketDetails} success={success} />
       </div>
     </>
   );

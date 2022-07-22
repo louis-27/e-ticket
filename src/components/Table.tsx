@@ -6,16 +6,15 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { fetcher } from "~/lib/fetcher";
 
 interface Participant {
   id: number;
-  nama: string;
+  name: string;
   nim: string;
-  noHp: string;
-  kelompok: string;
-  pic: string;
-  status: boolean;
-  checkIn: Date;
+  phone: string;
+  group: any;
+  checkIn: any;
 }
 
 export function Table({ data }) {
@@ -28,7 +27,7 @@ export function Table({ data }) {
         cell: (info) => info.getValue(),
       },
       {
-        accessorKey: "nama",
+        accessorKey: "name",
         header: "Nama",
         cell: (info) => info.getValue(),
       },
@@ -38,29 +37,36 @@ export function Table({ data }) {
         cell: (info) => info.getValue(),
       },
       {
-        accessorKey: "noHp",
+        accessorKey: "phone",
         header: "No HP",
         cell: (info) => info.getValue(),
       },
       {
-        accessorKey: "kelompok",
+        accessorKey: "group",
         header: "Kelompok",
         cell: (info) => (
-          <span style={{ color: colorOf(info.getValue()), fontWeight: 600 }}>
-            {info.getValue()}
+          <span
+            style={{ color: colorOf(info.getValue().name), fontWeight: 600 }}
+          >
+            {info.getValue().name}
           </span>
         ),
       },
       {
-        accessorKey: "pic",
+        accessorKey: "group",
         header: "PIC Kelompok",
-        cell: (info) => info.getValue(),
+        cell: (info) => info.getValue().pic,
       },
       {
-        accessorKey: "status",
+        accessorKey: "checkInId",
         header: "Status",
         cell: (info) => (
-          <span style={{ marginLeft: ".75rem" }}>
+          <span
+            style={{ marginLeft: ".75rem" }}
+            onClick={() =>
+              toggleCheckIn(info.row.getValue("id"), info.getValue())
+            }
+          >
             {info.getValue() ? "✅" : "❌"}
           </span>
         ),
@@ -69,7 +75,8 @@ export function Table({ data }) {
         accessorKey: "checkIn",
         header: "Check-In",
         cell: (info) => {
-          const dt = new Date(info.getValue());
+          if (!info.getValue()) return "NA";
+          const dt = new Date(info.getValue().date);
           const pad = (num) => (num < 10 ? `0${num}` : num);
           return `${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
         },
@@ -83,6 +90,10 @@ export function Table({ data }) {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  const toggleCheckIn = async (id: number, checkInId: number) => {
+    const checkIn = await fetcher(`check-in`, { id, checkInId });
+  };
 
   const colorOf = (kelompok) => {
     const lookup = {
