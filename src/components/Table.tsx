@@ -1,4 +1,4 @@
-import { useReducer, useMemo } from "react";
+import { useReducer, useMemo, useState } from "react";
 import {
   ColumnDef,
   flexRender,
@@ -18,7 +18,7 @@ interface Participant {
   checkIn: any;
 }
 
-export function Table({ data }) {
+export function Table({ participants }) {
   const rerender = useReducer(() => ({}), {})[1];
   const columns = useMemo<ColumnDef<Participant>[]>(
     () => [
@@ -63,10 +63,13 @@ export function Table({ data }) {
         header: "Status",
         cell: (info) => (
           <span
-            style={{ marginLeft: ".75rem" }}
-            onClick={() =>
-              toggleCheckIn(info.row.getValue("id"), info.getValue())
-            }
+            style={{ marginLeft: ".75rem", cursor: "pointer" }}
+            onClick={async (evt) => {
+              // set to loading for while waiting for api
+              evt.target.innerText = 'loading'
+              const checkIn = await toggleCheckIn(info.row.getValue("id"), info.getValue())
+              updateStatus(info.row.getValue("id"), checkIn)
+            }}
           >
             {info.getValue() ? "✅" : "❌"}
           </span>
@@ -85,6 +88,9 @@ export function Table({ data }) {
     ],
     []
   );
+
+  const [data, setData] = useState(participants ?? [])
+
   const table = useReactTable({
     data,
     columns,
@@ -92,8 +98,28 @@ export function Table({ data }) {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
+
+  const refreshData = async () => {
+    const resp = await fetcher('data')
+    const newData = await resp.json()
+    setData(data => newData)
+    // rerender();
+  }
+
+  const updateStatus = (id, checkIn) => {
+    setData(data => data.map((i) => i.id === id 
+      ? {
+        ...i,
+        checkInId: i.checkInId ? null : checkIn.id,
+        checkIn: i.checkIn ? null : {date: (new Date()).toISOString()}
+      }
+      : i))
+  }
+
   const toggleCheckIn = async (id: number, checkInId: number) => {
     const checkIn = await fetcher(`check-in`, { id, checkInId });
+    const resp = await checkIn.json()
+    return resp.body
   };
 
   const colorOf = (kelompok) => {
@@ -112,7 +138,7 @@ export function Table({ data }) {
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold mb-4">Daftar peserta</h1>
         <div>
-          <button onClick={() => {console.log('the fuck::??'); rerender()}}>refresh</button>
+          <button onClick={refreshData}>refresh</button>
           <Search />
         </div>
       </div>

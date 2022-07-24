@@ -1,21 +1,7 @@
-import { Nav } from "~/components/Nav";
-import { SEO } from "~/components/SEO";
-import { Table } from "~/components/Table";
+import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "~/lib/prisma";
 
-export default function Dashboard({ participants }) {
-
-  return (
-    <>
-      <SEO />
-
-      <Nav />
-      <Table participants={participants} />
-    </>
-  );
-}
-
-export async function getServerSideProps(context) {
+export default async function handler(ref: NextApiRequest, res: NextApiResponse) {
   const participants = await prisma.participant.findMany({
     include: {
       group: {
@@ -32,7 +18,7 @@ export async function getServerSideProps(context) {
     },
     orderBy: {
       id: "asc",
-    }
+    },
   });
 
   const f = participants.map((e) =>
@@ -41,7 +27,5 @@ export async function getServerSideProps(context) {
       : { ...e, checkIn: { ...e.checkIn, date: e.checkIn.date.toISOString() } }
   );
 
-  return {
-    props: { participants: f },
-  };
+  res.status(200).json(f)
 }
