@@ -4,10 +4,14 @@ import {
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
+  getFilteredRowModel,
   useReactTable,
+  FilterFn,
 } from "@tanstack/react-table";
+import { rankItem } from "@tanstack/match-sorter-utils";
 import { fetcher } from "~/lib/fetcher";
 import { Search } from "~/components/Search";
+import { Spinner } from "~/components/Spinner";
 
 interface Participant {
   id: number;
@@ -19,6 +23,9 @@ interface Participant {
 }
 
 export function Table({ participants }) {
+  const [data, setData] = useState(participants ?? []);
+  const [loading, setLoading] = useState(-1);
+  const [globalFilter, setGlobalFilter] = useState("");
   const rerender = useReducer(() => ({}), {})[1];
   const columns = useMemo<ColumnDef<Participant>[]>(
     () => [
@@ -62,17 +69,27 @@ export function Table({ participants }) {
         accessorKey: "checkInId",
         header: "Status",
         cell: (info) => (
-          <span
-            style={{ marginLeft: ".75rem", cursor: "pointer" }}
-            onClick={async (evt) => {
-              // set to loading for while waiting for api
-              evt.target.innerText = 'loading'
-              const checkIn = await toggleCheckIn(info.row.getValue("id"), info.getValue())
-              updateStatus(info.row.getValue("id"), checkIn)
+          <button
+            className="ml-3 text-center"
+            onClick={async (e) => {
+              setLoading(Number(info.row.id));
+              const checkIn = await toggleCheckIn(
+                info.row.getValue("id"),
+                info.getValue()
+              );
+              updateStatus(info.row.getValue("id"), checkIn);
+              setLoading(-1);
             }}
+            disabled={loading === Number(info.row.id)}
           >
-            {info.getValue() ? "✅" : "❌"}
-          </span>
+            {loading === Number(info.row.id) ? (
+              <Spinner />
+            ) : info.getValue() ? (
+              "✅"
+            ) : (
+              "❌"
+            )}
+          </button>
         ),
       },
       {
@@ -86,40 +103,55 @@ export function Table({ participants }) {
         },
       },
     ],
-    []
+    [loading]
   );
 
-  const [data, setData] = useState(participants ?? [])
+  const filterFunc: FilterFn<any> = (row, columnId, value, addMeta) => {
+    // Rank the item
+    const itemRank = rankItem(row.getValue(columnId), value);
+    // Store the itemRank info
+    addMeta({
+      itemRank,
+    });
+    // Return if the item should be filtered in/out
+    return itemRank.passed;
+  };
 
   const table = useReactTable({
     data,
     columns,
+    state: { globalFilter },
+    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: filterFunc,
+    getFilteredRowModel: getFilteredRowModel(),
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-
   const refreshData = async () => {
-    const resp = await fetcher('data')
-    const newData = await resp.json()
-    setData(data => newData)
-    // rerender();
-  }
+    const resp = await fetcher("data");
+    const newData = await resp.json();
+    setData((data) => newData);
+  };
 
   const updateStatus = (id, checkIn) => {
-    setData(data => data.map((i) => i.id === id 
-      ? {
-        ...i,
-        checkInId: i.checkInId ? null : checkIn.id,
-        checkIn: i.checkIn ? null : {date: (new Date()).toISOString()}
-      }
-      : i))
-  }
+    setData((data) =>
+      data.map((i) =>
+        i.id === id
+          ? {
+              ...i,
+              checkInId: i.checkInId ? null : checkIn.id,
+              checkIn: i.checkIn ? null : { date: new Date().toISOString() },
+            }
+          : i
+      )
+    );
+  };
 
   const toggleCheckIn = async (id: number, checkInId: number) => {
     const checkIn = await fetcher(`check-in`, { id, checkInId });
-    const resp = await checkIn.json()
-    return resp.body
+    const resp = await checkIn.json();
+    return resp.body;
   };
 
   const colorOf = (kelompok) => {
@@ -138,7 +170,9 @@ export function Table({ participants }) {
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold mb-4">Daftar peserta</h1>
         <div>
-          <button onClick={refreshData}>refresh</button>
+          <button onClick={refreshData} className="mx-2 animate-spin">
+            🔄
+          </button>
           <Search />
         </div>
       </div>
@@ -192,8 +226,13 @@ export function Table({ participants }) {
         </span>
 
         <span className="ml-4">
-          {`${table.getState().pagination.pageIndex + 1}-${
-            table.getState().pagination.pageSize
+          {`${
+            table.getState().pagination.pageIndex *
+              table.getState().pagination.pageSize +
+            1
+          }-${
+            table.getState().pagination.pageSize *
+            (table.getState().pagination.pageIndex + 1)
           } of ${table.getPrePaginationRowModel().rows.length}`}
         </span>
 

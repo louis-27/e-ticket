@@ -149,7 +149,7 @@ const groupsData = [
         name: "Kevin Christanto",
         email: "kevinchristanto@gmail.com",
         phone: "+628127075561",
-        nim: "2440026632",
+        nim: "2440026862",
       },
       {
         name: "Bryan Zheng",
