@@ -8,8 +8,10 @@ export default async function handler(
 ) {
   const { id, checkInId } = req.body;
 
+  console.log(req.body)
+  let checkIn;
   if (!checkInId) {
-    const createCheckIn = await prisma.checkIn.create({
+    checkIn = await prisma.checkIn.create({
       data: {
         Participant: {
           connect: {
@@ -19,12 +21,12 @@ export default async function handler(
       },
     });
   } else {
-    const deleteCheckIn = await prisma.checkIn.delete({
+    checkIn = await prisma.checkIn.delete({
       where: {
         id: checkInId,
       },
     });
   }
 
-  res.status(200).json({ message: "OK" });
+  res.status(200).json({ message: "OK", body: checkIn });
 }

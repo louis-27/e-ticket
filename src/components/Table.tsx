@@ -1,4 +1,4 @@
-import { useReducer, useMemo } from "react";
+import { useReducer, useMemo, useState } from "react";
 import {
   ColumnDef,
   flexRender,
@@ -7,6 +7,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { fetcher } from "~/lib/fetcher";
+import { Search } from "~/components/Search";
 
 interface Participant {
   id: number;
@@ -17,7 +18,7 @@ interface Participant {
   checkIn: any;
 }
 
-export function Table({ data }) {
+export function Table({ participants }) {
   const rerender = useReducer(() => ({}), {})[1];
   const columns = useMemo<ColumnDef<Participant>[]>(
     () => [
@@ -62,10 +63,13 @@ export function Table({ data }) {
         header: "Status",
         cell: (info) => (
           <span
-            style={{ marginLeft: ".75rem" }}
-            onClick={() =>
-              toggleCheckIn(info.row.getValue("id"), info.getValue())
-            }
+            style={{ marginLeft: ".75rem", cursor: "pointer" }}
+            onClick={async (evt) => {
+              // set to loading for while waiting for api
+              evt.target.innerText = 'loading'
+              const checkIn = await toggleCheckIn(info.row.getValue("id"), info.getValue())
+              updateStatus(info.row.getValue("id"), checkIn)
+            }}
           >
             {info.getValue() ? "✅" : "❌"}
           </span>
@@ -84,6 +88,9 @@ export function Table({ data }) {
     ],
     []
   );
+
+  const [data, setData] = useState(participants ?? [])
+
   const table = useReactTable({
     data,
     columns,
@@ -91,8 +98,28 @@ export function Table({ data }) {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
+
+  const refreshData = async () => {
+    const resp = await fetcher('data')
+    const newData = await resp.json()
+    setData(data => newData)
+    // rerender();
+  }
+
+  const updateStatus = (id, checkIn) => {
+    setData(data => data.map((i) => i.id === id 
+      ? {
+        ...i,
+        checkInId: i.checkInId ? null : checkIn.id,
+        checkIn: i.checkIn ? null : {date: (new Date()).toISOString()}
+      }
+      : i))
+  }
+
   const toggleCheckIn = async (id: number, checkInId: number) => {
     const checkIn = await fetcher(`check-in`, { id, checkInId });
+    const resp = await checkIn.json()
+    return resp.body
   };
 
   const colorOf = (kelompok) => {
@@ -110,14 +137,18 @@ export function Table({ data }) {
     <div className="border rounded shadow-md max-w-5xl m-auto p-8 my-8 space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold mb-4">Daftar peserta</h1>
-        <input className="p-1 border rounded" placeholder="search" />
+        <div>
+          <button onClick={refreshData}>refresh</button>
+          <Search />
+        </div>
       </div>
       <table className="w-full">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id} className="border-b">
-              {headerGroup.headers.map((header) => (
-                <th key={header.id} className="p-2 text-left">
+              {headerGroup.headers.map((header, id) => (
+                // kelompok & pic kelompok has same header.id
+                <th key={header.id + id} className="p-2 text-left">
                   {header.isPlaceholder
                     ? null
                     : flexRender(
@@ -132,8 +163,9 @@ export function Table({ data }) {
         <tbody>
           {table.getRowModel().rows.map((row) => (
             <tr key={row.id} className="border-b">
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className="p-2 text-left">
+              {row.getVisibleCells().map((cell, id) => (
+                // kelompok & pic kelompok has same cell.id
+                <td key={cell.id + id} className="p-2 text-left">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
