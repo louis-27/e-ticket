@@ -7,6 +7,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { fetcher } from "~/lib/fetcher";
+import { Search } from "~/components/Search";
 
 interface Participant {
   id: number;
@@ -110,14 +111,18 @@ export function Table({ data }) {
     <div className="border rounded shadow-md max-w-5xl m-auto p-8 my-8 space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold mb-4">Daftar peserta</h1>
-        <input className="p-1 border rounded" placeholder="search" />
+        <div>
+          <button onClick={() => {console.log('the fuck::??'); rerender()}}>refresh</button>
+          <Search />
+        </div>
       </div>
       <table className="w-full">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id} className="border-b">
-              {headerGroup.headers.map((header) => (
-                <th key={header.id} className="p-2 text-left">
+              {headerGroup.headers.map((header, id) => (
+                // kelompok & pic kelompok has same header.id
+                <th key={header.id + id} className="p-2 text-left">
                   {header.isPlaceholder
                     ? null
                     : flexRender(
@@ -132,8 +137,9 @@ export function Table({ data }) {
         <tbody>
           {table.getRowModel().rows.map((row) => (
             <tr key={row.id} className="border-b">
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className="p-2 text-left">
+              {row.getVisibleCells().map((cell, id) => (
+                // kelompok & pic kelompok has same cell.id
+                <td key={cell.id + id} className="p-2 text-left">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
