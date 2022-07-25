@@ -10,7 +10,7 @@ export function Ticket({ ticketDetails, success }) {
 
   const checkIn = async () => {
     setLoading(true);
-    const createCheckIn = await fetcher(`check-in`, {
+    const createCheckIn = await fetcher("check-in", {
       id: ticketDetails.id,
       checkInId: ticketDetails.checkInId,
     });

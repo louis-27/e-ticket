@@ -1,10 +1,9 @@
 import { Nav } from "~/components/Nav";
 import { SEO } from "~/components/SEO";
-import { Table } from "~/components/Table";
+import { Table } from "~/components/table";
 import { prisma } from "~/lib/prisma";
 
 export default function Dashboard({ participants }) {
-
   return (
     <>
       <SEO />
@@ -32,7 +31,7 @@ export async function getServerSideProps(context) {
     },
     orderBy: {
       id: "asc",
-    }
+    },
   });
 
   const f = participants.map((e) =>
