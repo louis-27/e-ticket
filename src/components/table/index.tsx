@@ -1,4 +1,4 @@
-import { useReducer, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   ColumnDef,
   flexRender,
@@ -7,69 +7,59 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Search } from "~/components/Search";
-import { Spinner } from "~/components/Spinner";
+import { Filter } from "~/components/table/Filter";
+import { LoadingSpinner, RefreshSpinner } from "~/components/Spinner";
 
 import {
   colorOf,
-  filterFunc,
-  Participant,
+  fuzzyFilter,
   refreshData,
   toggleCheckIn,
   updateStatus,
 } from "~/lib/table";
+import type { Participant } from "~/lib/table";
 
 export function Table({ participants }) {
   const [data, setData] = useState(participants ?? []);
+  // console.log(data);
   const [loading, setLoading] = useState(-1);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [globalFilter, setGlobalFilter] = useState("");
-  const rerender = useReducer(() => ({}), {})[1];
   const columns = useMemo<ColumnDef<Participant>[]>(
     () => [
       {
         accessorKey: "id",
         header: "ID",
         cell: (info) => info.getValue(),
-        enableGlobalFilter: true,
       },
       {
         accessorKey: "name",
         header: "Nama",
         cell: (info) => info.getValue(),
-        enableGlobalFilter: true,
       },
       {
         accessorKey: "nim",
         header: "NIM",
         cell: (info) => info.getValue(),
-        enableGlobalFilter: true,
       },
       {
         accessorKey: "phone",
         header: "No HP",
         cell: (info) => info.getValue(),
-        enableGlobalFilter: true,
       },
       {
-        accessorKey: "group",
+        accessorFn: (p) => p.group.name,
         header: "Kelompok",
         cell: (info) => (
-          <span
-            // @ts-ignore
-            style={{ color: colorOf(info.getValue().name), fontWeight: 600 }}
-          >
-            {/* @ts-ignore */}
-            {info.getValue().name}
+          <span style={{ color: colorOf(info.getValue()), fontWeight: 600 }}>
+            {info.getValue()}
           </span>
         ),
-        enableGlobalFilter: true,
       },
       {
-        accessorKey: "group",
+        accessorFn: (p) => p.group.pic,
         header: "PIC Kelompok",
-        // @ts-ignore
-        cell: (info) => info.getValue().pic,
-        enableGlobalFilter: true,
+        cell: (info) => info.getValue(),
       },
       {
         accessorKey: "checkInId",
@@ -89,7 +79,7 @@ export function Table({ participants }) {
             }}
           >
             {loading === Number(info.row.id) ? (
-              <Spinner />
+              <LoadingSpinner />
             ) : info.getValue() ? (
               "✅"
             ) : (
@@ -117,12 +107,11 @@ export function Table({ participants }) {
     data,
     columns,
     state: { globalFilter },
-    onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: filterFunc,
-    // getColumnCanGlobalFilter
-    getFilteredRowModel: getFilteredRowModel(),
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    globalFilterFn: fuzzyFilter,
+    onGlobalFilterChange: setGlobalFilter,
   });
 
   return (
@@ -131,12 +120,12 @@ export function Table({ participants }) {
         <h1 className="text-xl font-bold mb-4">Daftar peserta</h1>
         <div>
           <button
-            onClick={() => refreshData(setData)}
-            className="mx-2 animate-spin"
+            onClick={() => refreshData(setData, setIsRefreshing)}
+            className="mx-2"
           >
-            🔄
+            <RefreshSpinner isRefreshing={isRefreshing} />
           </button>
-          <Search filter={globalFilter} setFilter={setGlobalFilter} />
+          <Filter filter={globalFilter} setFilter={setGlobalFilter} />
         </div>
       </div>
       <table className="w-full">

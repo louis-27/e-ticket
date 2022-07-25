@@ -1,5 +1,5 @@
 import { rankItem } from "@tanstack/match-sorter-utils";
-import { FilterFn } from "@tanstack/react-table";
+import type { FilterFn } from "@tanstack/react-table";
 import { fetcher } from "~/lib/fetcher";
 
 export interface Participant {
@@ -23,25 +23,33 @@ export const colorOf = (kelompok) => {
   return lookup.hasOwnProperty(kelompok) ? lookup[kelompok] : "black";
 };
 
-export const filterFunc: FilterFn<any> = (row, columnId, value, addMeta) => {
+export const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+  if (value === "-" || value == "NA") {
+    // TODO: refactor dis
+    columnId = "checkIn";
+    value = "null";
+  }
+
   // Rank the item
   const itemRank = rankItem(row.getValue(columnId), value);
   // Store the itemRank info
-  addMeta({
-    itemRank,
-  });
+  addMeta(itemRank);
   // Return if the item should be filtered in/out
   return itemRank.passed;
 };
 
-export const refreshData = async (setData) => {
-  const res = await fetcher("data");
+export const refreshData = async (setData, setIsRefreshing) => {
+  setIsRefreshing((state) => !state);
+
+  const res = await fetcher("participants");
   const newData = await res.json();
   setData((data) => newData);
+
+  setIsRefreshing((state) => !state);
 };
 
 export const toggleCheckIn = async (id: number, checkInId: number) => {
-  const checkIn = await fetcher(`check-in`, { id, checkInId });
+  const checkIn = await fetcher("check-in", { id, checkInId });
   const res = await checkIn.json();
 
   return res.body;
