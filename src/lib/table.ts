@@ -24,11 +24,13 @@ export const colorOf = (kelompok) => {
 };
 
 export const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+  if (value === "-" || value === "NA") {
+    columnId = "checkIn";
+    value = "null";
+  }
+
   // Rank the item
-  const itemRank = rankItem(
-    row.getValue(columnId),
-    value === "-" || value === "NA" ? "null" : value
-  );
+  const itemRank = rankItem(row.getValue(columnId), value);
   // Store the itemRank info
   addMeta(itemRank);
   // Return if the item should be filtered in/out
