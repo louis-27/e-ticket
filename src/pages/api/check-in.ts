@@ -1,14 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "~/lib/prisma";
 
-// /check-in
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   const { id, checkInId } = req.body;
 
-  console.log(req.body)
   let checkIn;
   if (!checkInId) {
     checkIn = await prisma.checkIn.create({

@@ -21,7 +21,6 @@ import type { Participant } from "~/lib/table";
 
 export function Table({ participants }) {
   const [data, setData] = useState(participants ?? []);
-  // console.log(data);
   const [loading, setLoading] = useState(-1);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [globalFilter, setGlobalFilter] = useState("");
