@@ -23,7 +23,7 @@ export default function Home() {
   return (
     <>
       <SEO />
-      <div className="bg-gray-100 min-h-screen flex flex-col justify-center">
+      <div className="bg-gray-100 text-gray-800 min-h-screen flex flex-col justify-center">
         <div className="mt-6 mx-auto w-full max-w-md py-8 px-6 bg-white rounded-lg shadow-sm space-y-4">
           <div className="flex items-center">
             <Image src="/logo.png" alt="logo" width="250px" height="250px" />

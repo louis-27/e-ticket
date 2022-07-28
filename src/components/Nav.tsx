@@ -14,7 +14,7 @@ export function Nav() {
       <div className="max-w-5xl m-auto h-full flex justify-between items-center">
         <div className="text-2xl font-bold">E-Ticket</div>
         <button
-          className="bg-red-500 px-4 py-2 text-white font-medium hover:bg-opacity-80 rounded"
+          className="bg-red-500 px-4 py-2 text-white font-semibold hover:bg-opacity-80 rounded"
           onClick={logOut}
         >
           Log Out
