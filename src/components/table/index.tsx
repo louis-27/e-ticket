@@ -70,7 +70,7 @@ export function Table({ participants }) {
         header: "Status",
         cell: (info) => (
           <button
-            className="ml-3 text-center"
+            className="ml-2 text-center hover:bg-gray-200 active:bg-gray-300 p-2 rounded-full"
             disabled={loading === Number(info.row.id)}
             onClick={() => {
               setSelectedRowId(info.row.getValue("id"));
@@ -154,14 +154,14 @@ export function Table({ participants }) {
 
           setLoading(-1);
         }}
-        message={"Are you sure?"}
+        message={`You are about to to change the participant's status to ${ selectedRowValue ? '"Checked-Out"' : '"Checked-In"' }.`}
       />
 
-      <div className="border rounded shadow-md max-w-5xl m-auto p-8 my-8 space-y-4">
-        <h1 className="text-2xl font-bold mb-4">Daftar Peserta</h1>
+      <div className="border rounded-lg shadow-md border bg-white max-w-5xl m-auto p-8 my-8 space-y-4">
+        <h1 className="text-2xl font-bold mb-4">Participants</h1>
         <div className="flex items-center justify-between">
           <button
-            className="bg-green-600 px-3 py-2 text-white font-semibold hover:bg-opacity-80 rounded flex space-x-2 text-sm"
+            className="bg-green-600 hover:bg-green-700 active:bg-green-800 px-3 py-2 text-white font-semibold hover:bg-opacity-80 rounded flex space-x-2 text-sm"
             onClick={download}
           >
             <svg
@@ -209,7 +209,7 @@ export function Table({ participants }) {
             {table.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}
-                className="border-b hover:bg-gray-100 cursor-pointer"
+                className="border-b hover:bg-gray-50"
               >
                 {row.getVisibleCells().map((cell, id) => (
                   // kelompok & pic kelompok has same cell.id

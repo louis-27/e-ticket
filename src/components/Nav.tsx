@@ -10,11 +10,11 @@ export function Nav() {
   };
 
   return (
-    <nav className="h-16 border-b shadow-md border-gray-200">
+    <nav className="h-16 border-b shadow-md border bg-white">
       <div className="max-w-5xl m-auto h-full flex justify-between items-center">
         <div className="text-2xl font-bold">E-Ticket</div>
         <button
-          className="bg-red-500 px-4 py-2 text-white font-semibold hover:bg-opacity-80 rounded"
+          className="bg-red-600 px-4 py-2 text-white font-semibold hover:bg-red-700 active:bg-red-800 rounded"
           onClick={logOut}
         >
           Log Out
