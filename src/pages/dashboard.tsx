@@ -8,8 +8,10 @@ export default function Dashboard({ participants }) {
     <>
       <SEO />
 
-      <Nav />
-      <Table participants={participants} />
+      <div className="min-h-screen bg-gray-100">
+        <Nav />
+        <Table participants={participants} />
+      </div>
     </>
   );
 }

@@ -82,8 +82,8 @@ export function RoundButton({ type, onClick, disabled = false, spin = false }) {
   return (
     <button
       className={
-        "border rounded-full p-2 active:bg-gray-200 " +
-        (disabled ? "text-gray-400" : "hover:bg-gray-100")
+        "border rounded-full p-2 " +
+        (disabled ? "text-gray-400" : "hover:bg-gray-100 active:bg-gray-200")
       }
       onClick={onClick}
       disabled={disabled}

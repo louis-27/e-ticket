@@ -24,7 +24,7 @@ export default function Home() {
     <>
       <SEO />
       <div className="bg-gray-100 text-gray-800 min-h-screen flex flex-col justify-center">
-        <div className="mt-6 mx-auto w-full max-w-md py-8 px-6 bg-white rounded-lg shadow-sm space-y-4">
+        <div className="mt-6 mx-auto w-full max-w-md py-8 px-6 bg-white border rounded-lg shadow-md space-y-4">
           <div className="flex items-center">
             <Image src="/logo.png" alt="logo" width="250px" height="250px" />
             <Image src="/logo.png" alt="logo" width="250px" height="250px" />
@@ -43,13 +43,13 @@ export default function Home() {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-2 mb-4 border border-gray-300 px-3 py-2 rounded-lg shadow-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              className="mt-2 mb-4 border border-gray-300 px-3 py-2 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               required
             />
 
             <button
               type="submit"
-              className="bg-blue-500 px-4 py-2 text-white font-medium hover:bg-opacity-80 rounded"
+              className="bg-blue-600 px-4 py-2 text-white font-semibold hover:bg-blue-700 active:bg-blue-800 rounded"
             >
               Login
             </button>
