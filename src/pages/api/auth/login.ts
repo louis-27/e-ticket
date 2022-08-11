@@ -23,7 +23,7 @@ export default async function handler(
     "Set-Cookie",
     cookie.serialize("E-TICKET_ACCESS_TOKEN", token, {
       httpOnly: true,
-      maxAge: 8 * 3600,
+      maxAge: 3600 * 2, // Cookie expires in 2 hours
       path: "/",
       sameSite: "lax",
     })
