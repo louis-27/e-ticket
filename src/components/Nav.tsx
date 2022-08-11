@@ -5,7 +5,7 @@ export function Nav() {
   const router = useRouter();
 
   const logOut = async () => {
-    await fetcher("auth/logout");
+    await fetcher("auth/logout", {}); // Include something (e.g. empty object) to make the logout request method "POST". A "GET" request to a cached resource may return a `304 not modified` response in production.
     router.push("/");
   };
 
