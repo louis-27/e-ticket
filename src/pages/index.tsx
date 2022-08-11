@@ -6,6 +6,7 @@ import { SEO } from "~/components/SEO";
 
 export default function Home() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [password, setPassword] = useState<string>("");
 
   const handleSubmit = async (e) => {
@@ -15,7 +16,7 @@ export default function Home() {
     if (user.status === 200) {
       router.push("/dashboard");
     } else {
-      // TODO (Low): Incorrect password message
+      setIsLoading(false);
       window.alert("Incorrect password");
     }
   };
@@ -49,9 +50,39 @@ export default function Home() {
 
             <button
               type="submit"
-              className="bg-blue-600 px-4 py-2 text-white font-semibold hover:bg-blue-700 active:bg-blue-800 rounded"
+              className={`flex justify-center items-center bg-blue-600 text-white px-4 py-2 rounded font-semibold enabled:hover:bg-blue-700 enabled:active:bg-blue-800 disabled:bg-opacity-60 disabled:cursor-not-allowed`}
+              disabled={isLoading}
+              onClick={() => {
+                if (password !== "") setIsLoading((state) => !state);
+              }}
             >
-              Login
+              {isLoading ? (
+                <>
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Logging in...
+                </>
+              ) : (
+                "Login"
+              )}
             </button>
           </form>
         </div>
