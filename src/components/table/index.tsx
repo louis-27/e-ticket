@@ -80,7 +80,7 @@ export function Table({ participants }) {
             }}
           >
             {loading === Number(info.row.id) ? (
-              <LoadingSpinner />
+              <LoadingSpinner color={"slate-400"} />
             ) : info.getValue() ? (
               "✅"
             ) : (
@@ -154,7 +154,9 @@ export function Table({ participants }) {
 
           setLoading(-1);
         }}
-        message={`You are about to to change the participant's status to ${ selectedRowValue ? '"Checked-Out"' : '"Checked-In"' }.`}
+        message={`You are about to to change the participant's status to ${
+          selectedRowValue ? '"Checked-Out"' : '"Checked-In"'
+        }.`}
       />
 
       <div className="border rounded-lg shadow-md border bg-white max-w-5xl m-auto p-8 my-8 space-y-4">
@@ -207,10 +209,7 @@ export function Table({ participants }) {
           </thead>
           <tbody>
             {table.getRowModel().rows.map((row) => (
-              <tr
-                key={row.id}
-                className="border-b hover:bg-gray-50"
-              >
+              <tr key={row.id} className="border-b hover:bg-gray-50">
                 {row.getVisibleCells().map((cell, id) => (
                   // kelompok & pic kelompok has same cell.id
                   <td key={cell.id + id} className="p-3 text-left">
