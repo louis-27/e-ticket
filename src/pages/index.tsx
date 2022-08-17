@@ -45,7 +45,14 @@ export default function Home() {
             <div className="text-2xl font-bold text-center">E-Ticket PKPM</div>
           </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col" method="POST">
+          <form
+            onSubmit={(e) => {
+              if (password !== "") setIsLoading((state) => !state);
+              handleSubmit(e);
+            }}
+            className="flex flex-col"
+            method="POST"
+          >
             <label className="text-base font-medium">
               Enter Master Password
             </label>
@@ -62,9 +69,6 @@ export default function Home() {
               type="submit"
               className={`flex justify-center items-center bg-blue-600 text-white px-4 py-2 rounded font-semibold enabled:hover:bg-blue-700 enabled:active:bg-blue-800 disabled:bg-opacity-60 disabled:cursor-not-allowed`}
               disabled={isLoading}
-              onClick={() => {
-                if (password !== "") setIsLoading((state) => !state);
-              }}
             >
               {isLoading ? (
                 <>
