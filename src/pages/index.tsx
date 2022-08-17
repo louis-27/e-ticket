@@ -27,8 +27,18 @@ export default function Home() {
       <div className="bg-gray-100 text-gray-800 min-h-screen flex flex-col justify-center">
         <div className="mt-6 mx-auto w-full max-w-md py-8 px-6 bg-white border rounded-lg shadow-md space-y-4">
           <div className="flex items-center">
-            <Image src="/logo.png" alt="logo" width="250px" height="250px" />
-            <Image src="/logo.png" alt="logo" width="250px" height="250px" />
+            <Image
+              src="/img/himme-logo.png"
+              alt="logo"
+              width="250px"
+              height="250px"
+            />
+            <Image
+              src="/img/pkpm-logo.jpeg"
+              alt="logo"
+              width="250px"
+              height="250px"
+            />
           </div>
 
           <div className="mx-auto w-full max-w-md">
