@@ -55,7 +55,12 @@ export function Table({ participants }) {
         accessorFn: (p) => p.group.name,
         header: "Kelompok",
         cell: (info) => (
-          <span style={{ color: colorOf(info.getValue()), fontWeight: 600 }}>
+          <span style={{
+            ...colorOf(info.getValue()),
+            fontWeight: 600,
+            padding: '.5rem',
+            borderRadius: '4px'
+          }}>
             {info.getValue()}
           </span>
         ),
@@ -157,6 +162,9 @@ export function Table({ participants }) {
         message={`You are about to to change the participant's status to ${
           selectedRowValue ? '"Checked-Out"' : '"Checked-In"'
         }.`}
+        message={`Change status to ${
+          selectedRowValue ? '"Not Checked-In"' : '"Checked-In"'
+        }?`}
       />
 
       <div className="border rounded-lg shadow-md border bg-white max-w-5xl m-auto p-8 my-8 space-y-4">

@@ -64,8 +64,8 @@ export function Ticket({ ticketDetails, success }) {
           </h2>
           <p>
             {state === 1
-              ? "Please proceed to the venue!"
-              : "This is not a valid ticket. Please check with other staff to confirm."}
+              ? "Ticket successfully verified! "
+              : "This is not a valid ticket. Please confirm with other commitees."}
           </p>
         </>
       )}
