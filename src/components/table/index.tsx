@@ -57,9 +57,10 @@ export function Table({ participants }) {
         cell: (info) => (
           <span
             style={{
-              ...colorOf(info.getValue()),
+              ...colorOf(info.row.id),
               fontWeight: 600,
-              padding: ".5rem",
+              padding: ".25rem",
+              whiteSpace: "nowrap",
               borderRadius: "4px",
             }}
           >
@@ -69,7 +70,7 @@ export function Table({ participants }) {
       },
       {
         accessorFn: (p) => p.group.pic,
-        header: "PIC Kelompok",
+        header: "PIC",
         cell: (info) => info.getValue(),
       },
       {
