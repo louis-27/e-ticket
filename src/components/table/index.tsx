@@ -57,7 +57,7 @@ export function Table({ participants }) {
         cell: (info) => (
           <span
             style={{
-              ...colorOf(info.row.id),
+              ...colorOf(info.getValue()),
               fontWeight: 600,
               padding: ".25rem",
               whiteSpace: "nowrap",
