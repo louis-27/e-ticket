@@ -34,7 +34,7 @@ export function Table({ participants }) {
       {
         accessorKey: "id",
         header: "ID",
-        cell: (info) => info.getValue(),
+        cell: (info) => <code>{ info.getValue() }</code>,
       },
       {
         accessorKey: "name",
@@ -44,12 +44,12 @@ export function Table({ participants }) {
       {
         accessorKey: "nim",
         header: "NIM",
-        cell: (info) => info.getValue(),
+        cell: (info) => <code>{ info.getValue() }</code>,
       },
       {
         accessorKey: "phone",
         header: "No HP",
-        cell: (info) => info.getValue(),
+        cell: (info) => <code>{ info.getValue() }</code>,
       },
       {
         accessorFn: (p) => p.group.name,
@@ -105,7 +105,7 @@ export function Table({ participants }) {
           // @ts-ignore
           const dt = new Date(info.getValue().date);
           const pad = (num) => (num < 10 ? `0${num}` : num);
-          return `${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+          return <code>{`${pad(dt.getHours())}:${pad(dt.getMinutes())}`}</code>;
         },
       },
     ],
