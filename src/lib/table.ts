@@ -12,7 +12,6 @@ export interface Participant {
 }
 
 export const colorOf = (kelompok) => {
-  console.log('fuck', kelompok)
   const lookup = {
     "Caribbean Sea": { color: "white", background: "black" },
     "Black Sea": { color: "black", background: "#f4f4f5" },
