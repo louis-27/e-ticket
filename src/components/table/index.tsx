@@ -167,7 +167,10 @@ export function Table({ participants }) {
         }?`}
       />
 
-      <div className="border rounded-lg shadow-md border bg-white max-w-5xl m-auto p-8 my-8 space-y-4">
+      <div className="px-4 py-3 flex flex-col justify-center space-y-3 min-w-[16rem] text-xl font-bold md:hidden">
+        Open this page on your laptop to view the dashboard.
+      </div>
+      <div className="hidden md:block border rounded-lg shadow-md border bg-white max-w-5xl m-auto p-8 my-8 space-y-4">
         <h1 className="text-2xl font-bold mb-4">Participants</h1>
         <div className="flex items-center justify-between">
           <button
@@ -197,7 +200,7 @@ export function Table({ participants }) {
             <Filter filter={globalFilter} setFilter={setGlobalFilter} />
           </div>
         </div>
-        <table className="w-full">
+        <table className="w-full overflow-x-scroll">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id} className="border-b">
