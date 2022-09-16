@@ -38,6 +38,7 @@ export async function getServerSideProps(context) {
       },
     },
   });
+  console.log(foundTicket)
 
   if (!foundTicket) return { props: { success: false } };
 

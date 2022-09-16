@@ -6,7 +6,7 @@ export function Ticket({ ticketDetails, success }) {
   const [state, setstate] = useState(
     // prettier-ignore
     !success ? -1 : (ticketDetails.checkInId ? 1 : 0)
-  ); // -1: fail, 0: not checked-in, 1: state
+  ); // -1: fail, 0: not checked-in, 1: checked in, 2: successful
 
   const checkIn = async () => {
     setLoading(true);
@@ -14,7 +14,7 @@ export function Ticket({ ticketDetails, success }) {
       id: ticketDetails.id,
       checkInId: ticketDetails.checkInId,
     });
-    setstate(1);
+    setstate(2);
     setLoading(false);
   };
 
@@ -53,19 +53,25 @@ export function Ticket({ ticketDetails, success }) {
         </>
       ) : (
         <>
-          <h1 className="text-4xl text-center">{state === 1 ? "🤩" : "😵"}</h1>
+          <h1 className="text-4xl text-center">
+            {state === -1 ? "😵" : (state === 1 ? "😎" : "🤩")}
+          </h1>
           <h2
             className={
               "text-2xl font-bold text-center " +
-              (state === 1 ? "text-green-600" : "text-red-600")
+              (state === -1 ? "text-red-600" : (state === 1 ? "text-blue-600" : "text-green-600"))
             }
           >
-            {state === 1 ? "Success!" : "Oopsie!"}
+            {state === -1 ? "Oopsie!" : (state === 1 ? "Verified!" : "Success!")}
           </h2>
           <p>
-            {state === 1
-              ? "Ticket successfully verified! "
-              : "This is not a valid ticket. Please confirm with other commitees."}
+            {state === -1
+              ? "This is not a valid ticket. Please confirm with other commitees."
+              : (state === 1
+                ? "This ticket has already been verified. Participant is allowed to go in the venue."
+                : "Ticket successfully verified! "
+              )
+            } 
           </p>
         </>
       )}

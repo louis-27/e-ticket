@@ -10,7 +10,7 @@ export function Nav() {
   };
 
   return (
-    <nav className="h-16 border-b shadow-md border bg-white">
+    <nav className="h-16 border-b shadow-md border bg-white px-2">
       <div className="max-w-5xl m-auto h-full flex justify-between items-center">
         <div className="text-2xl font-bold">E-Ticket</div>
         <button
