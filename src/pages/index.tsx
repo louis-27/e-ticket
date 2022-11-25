@@ -34,7 +34,7 @@ export default function Home() {
               height="250px"
             />
             <Image
-              src="/img/pkpm-logo.jpeg"
+              src="/img/sigcm-logo.jpeg"
               alt="logo"
               width="250px"
               height="250px"
@@ -42,7 +42,7 @@ export default function Home() {
           </div>
 
           <div className="mx-auto w-full max-w-md">
-            <div className="text-2xl font-bold text-center">E-Ticket PKPM</div>
+            <div className="text-2xl font-bold text-center">E-Ticket SIGCM</div>
           </div>
 
           <form
