@@ -1,4 +1,4 @@
-# E-ticket
+# E-Ticket
 Event e-ticketing and partcipant check-in system that streamlined the event flow up to 400% for 600+ participants.
 
 ## Built with
