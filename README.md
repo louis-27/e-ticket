@@ -1,34 +1,35 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# E-ticket
+Event e-ticketing and partcipant check-in system that streamlined the event flow up to 400% for 600+ participants.
 
-## Getting Started
+## Built with
+![NextJS](https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-181818?style=for-the-badge&logo=supabase&logoColor=white)
 
-First, run the development server:
+## Features
+### User-friendly dashboard
+![Screenshot of dashboard](/screenshots/dashboard.jpg)
 
+The dashboard allows the event committees to see participants' registration status and manually check-in participants when needed.
+
+### Easy check-ins for physical events
+![Screenshot of checkin](/screenshots/checkin.jpg)
+
+Event committees at the registration counter will scan the e-tickets presented by the participants to do the check-in. This removes the need to manually write down the details (e.g. name, email, check-in time, etc.) and streamlines the check-in process.
+
+### Automated ticket generator & sender
+The system takes in the list of participants and generates e-tickets and sends the tickets to the participants through WhatsApp or email. This is the repository for the web dashboard, which doesn't include the code for the ticket generator. You can find the code for the generator in [this other repository](https://github.com/rmrt1n/sigcm-ticket-generator).
+
+## Developing
+Instructions to build the project from source.
 ```bash
-npm run dev
-# or
+# clone this repository
+git clone https://github.com/louis-27/e-ticket && cd e-ticket
+
+# install dependencies
+yarn add
+
+# run dev server
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
