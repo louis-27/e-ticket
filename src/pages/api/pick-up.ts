@@ -13,7 +13,6 @@ export default async function handler(
       pickedUp: !curValue,
     }
   });
-  console.log('res', pickedUp)
 
   res.status(200).json({ message: "OK", body: pickedUp });
 }
