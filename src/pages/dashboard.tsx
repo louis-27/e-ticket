@@ -35,6 +35,7 @@ export async function getServerSideProps(context) {
       id: "asc",
     },
   });
+  console.log(participants)
 
   const f = participants.map((e) =>
     !e.checkInId

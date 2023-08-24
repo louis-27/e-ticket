@@ -9,6 +9,7 @@ export interface Participant {
   phone: string;
   group: any;
   checkIn: any;
+  pickedUp: boolean;
 }
 
 export const colorOf = (kelompok) => {
@@ -79,15 +80,35 @@ export const toggleCheckIn = async (id: number, checkInId: number) => {
   return res.body;
 };
 
-export const updateStatus = (id, checkIn, setData) => {
+export const togglePickUp = async (id: number, curValue: boolean) => {
+  const checkIn = await fetcher("pick-up", { id, curValue });
+  const res = await checkIn.json();
+
+  return res.body;
+};
+
+export const updateStatusCheckIn = (id, checkIn, setData) => {
   setData((data) =>
     data.map((i) =>
       i.id === id
         ? {
-            ...i,
-            checkInId: i.checkInId ? null : checkIn.id,
-            checkIn: i.checkIn ? null : { date: new Date().toISOString() },
-          }
+          ...i,
+          checkInId: i.checkInId ? null : checkIn.id,
+          checkIn: i.checkIn ? null : { date: new Date().toISOString() },
+        }
+        : i
+    )
+  );
+};
+
+export const updateStatusPickUp = (id, setData) => {
+  setData((data) =>
+    data.map((i) =>
+      i.id === id
+        ? {
+          ...i,
+          pickedUp: !i.pickedUp,
+        }
         : i
     )
   );

@@ -16,7 +16,9 @@ import {
   fuzzyFilter,
   refreshData,
   toggleCheckIn,
-  updateStatus,
+  togglePickUp,
+  updateStatusCheckIn,
+  updateStatusPickUp,
 } from "~/lib/table";
 import type { Participant } from "~/lib/table";
 import { Modal } from "../Modal";
@@ -24,7 +26,8 @@ import { useModal } from "~/lib/hooks/useModal";
 
 export function Table({ participants }) {
   const [data, setData] = useState(participants ?? []);
-  const [loading, setLoading] = useState(-1);
+  const [loadingCheckIn, setLoadingCheckIn] = useState(-1);
+  const [loadingPickup, setLoadingPickup] = useState(-1);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [globalFilter, setGlobalFilter] = useState("");
   const [selectedRowId, setSelectedRowId] = useState(0);
@@ -34,7 +37,7 @@ export function Table({ participants }) {
       {
         accessorKey: "id",
         header: "ID",
-        cell: (info) => <code>{ info.getValue() }</code>,
+        cell: (info) => <code>{info.getValue()}</code>,
       },
       {
         accessorKey: "name",
@@ -44,12 +47,12 @@ export function Table({ participants }) {
       {
         accessorKey: "nim",
         header: "NIM",
-        cell: (info) => <code>{ info.getValue() }</code>,
+        cell: (info) => <code>{info.getValue()}</code>,
       },
       {
         accessorKey: "phone",
         header: "No HP",
-        cell: (info) => <code>{ info.getValue() }</code>,
+        cell: (info) => <code>{info.getValue()}</code>,
       },
       {
         accessorFn: (p) => p.group.name,
@@ -74,20 +77,44 @@ export function Table({ participants }) {
         cell: (info) => info.getValue(),
       },
       {
+        accessorKey: "pickedUp",
+        header: "Item Picked Up",
+        cell: (info) => (
+          <button
+            className="ml-12 text-center hover:bg-gray-200 active:bg-gray-300 p-2 rounded-full"
+            disabled={loadingPickup === Number(info.row.id)}
+            onClick={() => {
+              setSelectedRowId(info.row.getValue("id"));
+              setSelectedRowValue(info.getValue());
+              // @ts-ignore
+              toggleModalPickup();
+            }}
+          >
+            {loadingPickup === Number(info.row.id) ? (
+              <LoadingSpinner color={"slate-400"} />
+            ) : info.getValue() ? (
+              "✅"
+            ) : (
+              "❌"
+            )}
+          </button>
+        ),
+      },
+      {
         accessorKey: "checkInId",
         header: "Status",
         cell: (info) => (
           <button
             className="ml-2 text-center hover:bg-gray-200 active:bg-gray-300 p-2 rounded-full"
-            disabled={loading === Number(info.row.id)}
+            disabled={loadingCheckIn === Number(info.row.id)}
             onClick={() => {
               setSelectedRowId(info.row.getValue("id"));
               setSelectedRowValue(info.getValue());
               // @ts-ignore
-              toggleModal();
+              toggleModalCheckIn();
             }}
           >
-            {loading === Number(info.row.id) ? (
+            {loadingCheckIn === Number(info.row.id) ? (
               <LoadingSpinner color={"slate-400"} />
             ) : info.getValue() ? (
               "✅"
@@ -110,9 +137,10 @@ export function Table({ participants }) {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [loading]
+    [loadingCheckIn]
   );
-  const [isOpen, toggleModal] = useModal();
+  const [isOpenCheckIn, toggleModalCheckIn] = useModal();
+  const [isOpenPickup, toggleModalPickup] = useModal();
 
   const table = useReactTable({
     data,
@@ -152,25 +180,39 @@ export function Table({ participants }) {
   return (
     <>
       <Modal
-        isOpen={isOpen}
-        toggleModal={toggleModal}
+        isOpen={isOpenCheckIn}
+        toggleModal={toggleModalCheckIn}
         action={async () => {
-          setLoading(selectedRowId - 1);
+          setLoadingCheckIn(selectedRowId - 1);
 
           const checkIn = await toggleCheckIn(selectedRowId, selectedRowValue);
-          updateStatus(selectedRowId, checkIn, setData);
+          updateStatusCheckIn(selectedRowId, checkIn, setData);
 
-          setLoading(-1);
+          setLoadingCheckIn(-1);
         }}
-        message={`Change status to ${
-          selectedRowValue ? '"Not Checked-In"' : '"Checked-In"'
-        }?`}
+        message={`Change status to ${selectedRowValue ? '"Not Checked-In"' : '"Checked-In"'
+          }?`}
+      />
+
+      <Modal
+        isOpen={isOpenPickup}
+        toggleModal={toggleModalPickup}
+        action={async () => {
+          setLoadingPickup(selectedRowId - 1);
+
+          const _pickedUp = await togglePickUp(selectedRowId, selectedRowValue);
+          updateStatusPickUp(selectedRowId, setData);
+
+          setLoadingPickup(-1);
+        }}
+        message={`Change status to ${selectedRowValue ? '"Not Picked Up"' : '"Picked Up"'
+          }?`}
       />
 
       <div className="px-4 py-3 flex flex-col justify-center space-y-3 min-w-[16rem] text-xl font-bold md:hidden">
         Open this page on your laptop to view the dashboard.
       </div>
-      <div className="hidden md:block border rounded-lg shadow-md border bg-white max-w-5xl m-auto p-8 my-8 space-y-4">
+      <div className="hidden md:block border rounded-lg shadow-md border bg-white max-w-7xl m-auto p-8 my-16 space-y-4">
         <h1 className="text-2xl font-bold mb-4">Participants</h1>
         <div className="flex items-center justify-between">
           <button
@@ -210,9 +252,9 @@ export function Table({ participants }) {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </th>
                 ))}
               </tr>
@@ -234,14 +276,12 @@ export function Table({ participants }) {
 
         <div className="flex items-center justify-between text-sm">
           <span>
-            {`Showing ${
-              table.getState().pagination.pageIndex *
-                table.getState().pagination.pageSize +
+            {`Showing ${table.getState().pagination.pageIndex *
+              table.getState().pagination.pageSize +
               1
-            }-${
-              table.getState().pagination.pageSize *
+              }-${table.getState().pagination.pageSize *
               (table.getState().pagination.pageIndex + 1)
-            } of ${table.getPrePaginationRowModel().rows.length} entries`}
+              } of ${table.getPrePaginationRowModel().rows.length} entries`}
           </span>
 
           <div className="flex items-center">
