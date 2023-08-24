@@ -215,24 +215,28 @@ export function Table({ participants }) {
       <div className="hidden md:block border rounded-lg shadow-md border bg-white max-w-7xl m-auto p-8 my-16 space-y-4">
         <h1 className="text-2xl font-bold mb-4">Participants</h1>
         <div className="flex items-center justify-between">
-          <button
-            className="bg-green-600 hover:bg-green-700 active:bg-green-800 px-3 py-2 text-white font-semibold hover:bg-opacity-80 rounded flex space-x-2 text-sm"
-            onClick={download}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
+          <div className="flex gap-2 items-center">
+            <button
+              className="bg-green-600 hover:bg-green-700 active:bg-green-800 px-3 py-2 text-white font-semibold hover:bg-opacity-80 rounded flex space-x-2 text-sm"
+              onClick={download}
             >
-              <path
-                fillRule="evenodd"
-                d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span>Export CSV</span>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <span>Export CSV</span>
+            </button>
+            <p>Participants checked-in: {data.reduce((acc, e) => acc + (e.checkInId ? 1 : 0), 0)}, </p>
+            <p>Items picked up: {data.reduce((acc, e) => acc + (e.pickedUp ? 1 : 0), 0)}</p>
+          </div>
           <div className="flex items-center space-x-4">
             <RoundButton
               type="refresh"
