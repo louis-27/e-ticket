@@ -16,7 +16,9 @@ import {
   fuzzyFilter,
   refreshData,
   toggleCheckIn,
-  updateStatus,
+  togglePickUp,
+  updateStatusCheckIn,
+  updateStatusPickUp,
 } from "~/lib/table";
 import type { Participant } from "~/lib/table";
 import { Modal } from "../Modal";
@@ -24,7 +26,8 @@ import { useModal } from "~/lib/hooks/useModal";
 
 export function Table({ participants }) {
   const [data, setData] = useState(participants ?? []);
-  const [loading, setLoading] = useState(-1);
+  const [loadingCheckIn, setLoadingCheckIn] = useState(-1);
+  const [loadingPickup, setLoadingPickup] = useState(-1);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [globalFilter, setGlobalFilter] = useState("");
   const [selectedRowId, setSelectedRowId] = useState(0);
@@ -34,7 +37,7 @@ export function Table({ participants }) {
       {
         accessorKey: "id",
         header: "ID",
-        cell: (info) => <code>{ info.getValue() }</code>,
+        cell: (info) => <code>{info.getValue()}</code>,
       },
       {
         accessorKey: "name",
@@ -44,12 +47,12 @@ export function Table({ participants }) {
       {
         accessorKey: "nim",
         header: "NIM",
-        cell: (info) => <code>{ info.getValue() }</code>,
+        cell: (info) => <code>{info.getValue()}</code>,
       },
       {
         accessorKey: "phone",
         header: "No HP",
-        cell: (info) => <code>{ info.getValue() }</code>,
+        cell: (info) => <code>{info.getValue()}</code>,
       },
       {
         accessorFn: (p) => p.group.name,
@@ -74,20 +77,44 @@ export function Table({ participants }) {
         cell: (info) => info.getValue(),
       },
       {
+        accessorKey: "pickedUp",
+        header: "Item Picked Up",
+        cell: (info) => (
+          <button
+            className="ml-12 text-center hover:bg-gray-200 active:bg-gray-300 p-2 rounded-full"
+            disabled={loadingPickup === Number(info.row.id)}
+            onClick={() => {
+              setSelectedRowId(info.row.getValue("id"));
+              setSelectedRowValue(info.getValue());
+              // @ts-ignore
+              toggleModalPickup();
+            }}
+          >
+            {loadingPickup === Number(info.row.id) ? (
+              <LoadingSpinner color={"slate-400"} />
+            ) : info.getValue() ? (
+              "✅"
+            ) : (
+              "❌"
+            )}
+          </button>
+        ),
+      },
+      {
         accessorKey: "checkInId",
         header: "Status",
         cell: (info) => (
           <button
             className="ml-2 text-center hover:bg-gray-200 active:bg-gray-300 p-2 rounded-full"
-            disabled={loading === Number(info.row.id)}
+            disabled={loadingCheckIn === Number(info.row.id)}
             onClick={() => {
               setSelectedRowId(info.row.getValue("id"));
               setSelectedRowValue(info.getValue());
               // @ts-ignore
-              toggleModal();
+              toggleModalCheckIn();
             }}
           >
-            {loading === Number(info.row.id) ? (
+            {loadingCheckIn === Number(info.row.id) ? (
               <LoadingSpinner color={"slate-400"} />
             ) : info.getValue() ? (
               "✅"
@@ -110,9 +137,10 @@ export function Table({ participants }) {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [loading]
+    [loadingCheckIn]
   );
-  const [isOpen, toggleModal] = useModal();
+  const [isOpenCheckIn, toggleModalCheckIn] = useModal();
+  const [isOpenPickup, toggleModalPickup] = useModal();
 
   const table = useReactTable({
     data,
@@ -152,45 +180,63 @@ export function Table({ participants }) {
   return (
     <>
       <Modal
-        isOpen={isOpen}
-        toggleModal={toggleModal}
+        isOpen={isOpenCheckIn}
+        toggleModal={toggleModalCheckIn}
         action={async () => {
-          setLoading(selectedRowId - 1);
+          setLoadingCheckIn(selectedRowId - 1);
 
           const checkIn = await toggleCheckIn(selectedRowId, selectedRowValue);
-          updateStatus(selectedRowId, checkIn, setData);
+          updateStatusCheckIn(selectedRowId, checkIn, setData);
 
-          setLoading(-1);
+          setLoadingCheckIn(-1);
         }}
-        message={`Change status to ${
-          selectedRowValue ? '"Not Checked-In"' : '"Checked-In"'
-        }?`}
+        message={`Change status to ${selectedRowValue ? '"Not Checked-In"' : '"Checked-In"'
+          }?`}
+      />
+
+      <Modal
+        isOpen={isOpenPickup}
+        toggleModal={toggleModalPickup}
+        action={async () => {
+          setLoadingPickup(selectedRowId - 1);
+
+          const _pickedUp = await togglePickUp(selectedRowId, selectedRowValue);
+          updateStatusPickUp(selectedRowId, setData);
+
+          setLoadingPickup(-1);
+        }}
+        message={`Change status to ${selectedRowValue ? '"Not Picked Up"' : '"Picked Up"'
+          }?`}
       />
 
       <div className="px-4 py-3 flex flex-col justify-center space-y-3 min-w-[16rem] text-xl font-bold md:hidden">
         Open this page on your laptop to view the dashboard.
       </div>
-      <div className="hidden md:block border rounded-lg shadow-md border bg-white max-w-5xl m-auto p-8 my-8 space-y-4">
+      <div className="hidden md:block border rounded-lg shadow-md border bg-white max-w-7xl m-auto p-8 my-16 space-y-4">
         <h1 className="text-2xl font-bold mb-4">Participants</h1>
         <div className="flex items-center justify-between">
-          <button
-            className="bg-green-600 hover:bg-green-700 active:bg-green-800 px-3 py-2 text-white font-semibold hover:bg-opacity-80 rounded flex space-x-2 text-sm"
-            onClick={download}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
+          <div className="flex gap-2 items-center">
+            <button
+              className="bg-green-600 hover:bg-green-700 active:bg-green-800 px-3 py-2 text-white font-semibold hover:bg-opacity-80 rounded flex space-x-2 text-sm"
+              onClick={download}
             >
-              <path
-                fillRule="evenodd"
-                d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span>Export CSV</span>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <span>Export CSV</span>
+            </button>
+            <p>Participants checked-in: {data.reduce((acc, e) => acc + (e.checkInId ? 1 : 0), 0)}, </p>
+            <p>Items picked up: {data.reduce((acc, e) => acc + (e.pickedUp ? 1 : 0), 0)}</p>
+          </div>
           <div className="flex items-center space-x-4">
             <RoundButton
               type="refresh"
@@ -210,9 +256,9 @@ export function Table({ participants }) {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </th>
                 ))}
               </tr>
@@ -234,14 +280,12 @@ export function Table({ participants }) {
 
         <div className="flex items-center justify-between text-sm">
           <span>
-            {`Showing ${
-              table.getState().pagination.pageIndex *
-                table.getState().pagination.pageSize +
+            {`Showing ${table.getState().pagination.pageIndex *
+              table.getState().pagination.pageSize +
               1
-            }-${
-              table.getState().pagination.pageSize *
+              }-${table.getState().pagination.pageSize *
               (table.getState().pagination.pageIndex + 1)
-            } of ${table.getPrePaginationRowModel().rows.length} entries`}
+              } of ${table.getPrePaginationRowModel().rows.length} entries`}
           </span>
 
           <div className="flex items-center">
